@@ -1,21 +1,24 @@
 package com.BridgeLab.InvoiceService;
 
 public class CabInvoiceGenerator {
-	public final int COST_PER_KILOMETER = 10;
+	public final double COST_PER_KILOMETER = 10;
 	private final int COST_PER_MINUTE = 1;
+	private final int MINIMUM_FARE = 5;
 
-	public int calculateFare(int distance, int time) {
-		int totalFare = distance * COST_PER_KILOMETER + time * COST_PER_MINUTE;
-		if (totalFare < 5)
-			totalFare = 5;
-		return totalFare;
+	public double calculateFare(double distance, int time) {
+		double totalFare = distance * COST_PER_KILOMETER + time * COST_PER_MINUTE;
+		return Math.max(totalFare, MINIMUM_FARE);
 	}
 
-	public int calculateTotalAggregateFare(Ride[] rides) {
-		int totalAggregateFare = 0;
+	public double calculateTotalAggregateFare(Ride[] rides) {
+		double totalAggregateFare = 0;
 		for (Ride ride : rides)
 			totalAggregateFare += calculateFare(ride.distance, ride.time);
 		return totalAggregateFare;
 	}
 
+	public InvoiceSummary getInvoiceSummary(Ride[] rides) {
+		double totalFare = calculateTotalAggregateFare(rides);
+		return new InvoiceSummary(rides.length, totalFare);
+	}
 }
